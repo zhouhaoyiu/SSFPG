@@ -7,7 +7,7 @@ This folder contains several programs for the SSFPG method:
 
 2. SSFPG_spar: Designed for problems in which the coefficient matrix consists of both dense and sparse components.
 
-3. SSFPG_spar_mob: Designed for the simultaneous inversion of multiple datasets. The data vectors are combined into a matrix and inverted together. By exploiting MATLAB matrix�Cmatrix multiplication, the inversion can be substantially accelerated.
+3. SSFPG_spar_mob: Designed for the simultaneous inversion of multiple datasets. The data vectors are combined into a matrix and inverted together. By exploiting MATLAB matrix-matrix multiplication, the inversion can be substantially accelerated.
 
 4. SSFPG_spar_mweits: Designed for problems with multiple weights applied to the sparse constraint matrix. Solutions corresponding to different weights can be obtained simultaneously in a single inversion.
 
