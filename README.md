@@ -15,3 +15,7 @@ This folder contains several programs for the SSFPG method:
 
 Reference
 Zhang, Yong. (2026). An Accelerated Projected-Gradient Method for Large-Scale Nonnegative Earthquake Source Inversions.
+
+## Experimental accelerated variants
+
+`SSFPG_fast.m` adds safer scaling, a cheaper safeguard, eigenvalue reuse, and warm starts. `SSFPG_gram.m` caches `G'*G` for repeated inversions with the same matrix. See [README_FAST.md](README_FAST.md) for usage, benchmarks, tests, and numerical limits.
