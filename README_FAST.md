@@ -63,13 +63,33 @@ On the same `N=2000`, `M=1000` benchmark:
 
 The cache preparation cost broke even after about two solves relative to the original, or about five solves relative to cached-`L` `SSFPG_fast`, on this matrix.
 
+## Rust MEX backend
+
+`SSFPG_gram_rust.m` keeps cache construction and data preparation in MATLAB and runs the dense nonnegative iteration loop in Rust. It has no Rust package dependencies. Build it locally with `rustc` and MATLAB's configured C MEX compiler:
+
+```matlab
+build_SSFPG_gram_rust
+[x1,misfit1,~,~,~,~,cache] = SSFPG_gram_rust(G,b1,1e-8,1000,1);
+[x2,misfit2] = SSFPG_gram_rust(G,b2,1e-8,1000,1,cache,x1);
+```
+
+On Apple M4 Max with MATLAB R2024a, the same `N=2000`, `M=1000`, 100-iteration interleaved benchmark gave:
+
+- Rust MEX: `0.0177 s`, 2.60 times faster than MATLAB `SSFPG_gram` and 13.11 times faster than the original SSFPG.
+- Relative objective difference from MATLAB `SSFPG_gram`: zero at printed precision.
+- Relative solution difference: `2.6e-8`; projected-gradient residual: `1.0e-9`.
+
+The Rust and MATLAB Gram solvers also matched residuals in constructed condition-number tests from `10` through `1e8`. Run `benchmark_SSFPG_gram_rust` on the target machine because BLAS and compiler performance vary.
+
 Run:
 
 ```matlab
 test_SSFPG_fast
 test_SSFPG_gram
+test_SSFPG_gram_rust
 benchmark_SSFPG_fast
 benchmark_SSFPG_gram
+benchmark_SSFPG_gram_rust
 ```
 
 ## Limits
@@ -77,5 +97,6 @@ benchmark_SSFPG_gram
 - The 1% eigenvalue safety margin passed 75 constructed full-rank, clustered-spectrum, ill-conditioned, rank-deficient, and rescaled cases. This is numerical evidence, not a universal proof. Pass a trusted `L` for critical inversions.
 - The current version accelerates `SSFPG.m`. Sparse, multi-observation, and multi-weight variants are unchanged.
 - `SSFPG_gram` uses normal equations. This can lose numerical accuracy for severely ill-conditioned matrices. Use `SSFPG_fast` when preserving the original `G'*(b-G*x)` calculation is required.
+- `SSFPG_gram_rust` currently supports full real double matrices and the nonnegative projection only. The repository contains source code, not a platform-specific MEX binary; run the build script locally.
 - Ill-conditioned inverse problems still require suitable regularization or preconditioning. Faster iterations do not recover poorly resolved model components.
 - The benchmark is synthetic. Validate runtime, waveform fit, moment, slip distribution, and stopping tolerance on the actual rupture-inversion matrices before scientific use.
