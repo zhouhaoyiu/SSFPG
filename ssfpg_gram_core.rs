@@ -115,7 +115,7 @@ pub unsafe extern "C" fn ssfpg_gram_core(
 
         let mut value = evaluate(&mut x, &mut hx);
         if step > tmax && k > 0 && value - misfit[k - 1] > f64::EPSILON {
-            step = 1.5 * tmax / 2.0;
+            step = 0.75 * tmax;
             used_steps[k] = step;
             for j in 0..m {
                 x[j] = (x0[j] + step * gradient[j]).max(0.0);

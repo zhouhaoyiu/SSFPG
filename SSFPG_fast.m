@@ -41,7 +41,8 @@ sg=size(G);
 if ~iscolumn(ob) || size(G,1)~=numel(ob)
     error('SSFPG_fast:dimensions','ob must be a column vector with size(G,1) elements.')
 end
-if iter<1 || iter~=fix(iter)
+if ~isnumeric(iter) || ~isscalar(iter) || ~isreal(iter) || ~isfinite(iter) || ...
+        iter<1 || iter~=fix(iter)
     error('SSFPG_fast:iterations','iter must be a positive integer.')
 end
 if ~isscalar(Xtol0) || ~isfinite(Xtol0) || Xtol0<0

@@ -34,5 +34,11 @@ try
 catch ME
     assert(strcmp(ME.identifier,'SSFPG_gram:scaling'))
 end
+try
+    SSFPG_gram(G,b,1e-10,[1 2],project,1);
+    error('test_SSFPG_gram:iterationsAccepted','Nonscalar iter was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram:iterations'))
+end
 fprintf('test_SSFPG_gram passed\n');
 end

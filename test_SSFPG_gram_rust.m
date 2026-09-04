@@ -25,6 +25,12 @@ catch ME
     assert(strcmp(ME.identifier,'SSFPG_gram_rust:scaling'))
 end
 try
+    SSFPG_gram_rust(G,b,0,[1 2],1,cache);
+    error('test_SSFPG_gram_rust:iterationsAccepted','Nonscalar iter was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram_rust:iterations'))
+end
+try
     [~,~,~,~,~,~]=SSFPG_gram_rust_mex(cache.H,G'*b,G,b,ones(2,1),[1 2],1,0,1,ones(60,1));
     error('test_SSFPG_gram_rust:vectorScalarAccepted','A nonscalar MEX control input was accepted.')
 catch ME

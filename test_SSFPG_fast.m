@@ -30,5 +30,11 @@ try
 catch ME
     assert(strcmp(ME.identifier,'SSFPG_fast:scaling'))
 end
+try
+    SSFPG_fast(G,b,1e-10,[1 2],@(X)max(X,0),1);
+    error('test_SSFPG_fast:iterationsAccepted','Nonscalar iter was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_fast:iterations'))
+end
 fprintf('test_SSFPG_fast passed\n');
 end

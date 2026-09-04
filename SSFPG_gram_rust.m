@@ -14,7 +14,10 @@ end
 if ~isa(ob,'double') || ~isreal(ob) || ~iscolumn(ob) || size(G,1)~=numel(ob)
     error('SSFPG_gram_rust:dimensions','ob must be a real double column vector with size(G,1) elements.')
 end
-if ~isscalar(iter) || iter<1 || iter~=fix(iter),error('SSFPG_gram_rust:iterations','iter must be a positive integer.');end
+if ~isnumeric(iter) || ~isscalar(iter) || ~isreal(iter) || ~isfinite(iter) || ...
+        iter<1 || iter~=fix(iter)
+    error('SSFPG_gram_rust:iterations','iter must be a positive integer.')
+end
 if ~isscalar(Xtol0) || ~isfinite(Xtol0) || Xtol0<0
     error('SSFPG_gram_rust:tolerance','Xtol0 must be a nonnegative finite scalar.')
 end
