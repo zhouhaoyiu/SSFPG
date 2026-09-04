@@ -30,6 +30,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         mxGetNumberOfElements(prhs[9]) != m || iter == 0) {
         mexErrMsgIdAndTxt("SSFPG_gram_rust:dimensions", "Incompatible MEX input dimensions.");
     }
+    if (mxGetNumberOfElements(prhs[5]) != 1 || mxGetNumberOfElements(prhs[6]) != 1 ||
+        mxGetNumberOfElements(prhs[7]) != 1 || mxGetNumberOfElements(prhs[8]) != 1) {
+        mexErrMsgIdAndTxt("SSFPG_gram_rust:scalars", "tmax, obE, Xtol0, and isscaling must be scalars.");
+    }
 
     plhs[0] = mxCreateDoubleMatrix(m, 1, mxREAL);
     plhs[1] = mxCreateDoubleMatrix(iter, 1, mxREAL);

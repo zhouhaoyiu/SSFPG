@@ -24,5 +24,11 @@ try
 catch ME
     assert(strcmp(ME.identifier,'SSFPG_fast:egmax'))
 end
+try
+    SSFPG_fast(G,b,1e-10,2,@(X)max(X,0),[0 1]);
+    error('test_SSFPG_fast:scalingAccepted','Nonscalar isscaling was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_fast:scaling'))
+end
 fprintf('test_SSFPG_fast passed\n');
 end

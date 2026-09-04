@@ -1,3 +1,4 @@
+function test_SSFPG_gram_rust
 rng(20260904);
 G=randn(120,60);b=randn(120,1);project=@(X)max(X,0);
 [xm,mm,~,rm,am,dm,cache]=SSFPG_gram(G,b,1e-12,200,project,1);
@@ -17,6 +18,18 @@ try
 catch ME
     assert(strcmp(ME.identifier,'SSFPG_gram_rust:cache'))
 end
+try
+    SSFPG_gram_rust(G,b,0,2,[0 1],cache);
+    error('test_SSFPG_gram_rust:scalingAccepted','Nonscalar isscaling was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram_rust:scaling'))
+end
+try
+    [~,~,~,~,~,~]=SSFPG_gram_rust_mex(cache.H,G'*b,G,b,ones(2,1),[1 2],1,0,1,ones(60,1));
+    error('test_SSFPG_gram_rust:vectorScalarAccepted','A nonscalar MEX control input was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram_rust:scalars'))
+end
 
 rng(7);m=160;n=80;[U,~]=qr(randn(m,n),0);[V,~]=qr(randn(n,n),0);xtrue=0.1+abs(randn(n,1));
 for kappa=[10 1e3 1e6 1e8]
@@ -29,3 +42,4 @@ for kappa=[10 1e3 1e6 1e8]
     assert(abs(rrust-rmatlab)/max(rmatlab,eps)<1e-7)
 end
 fprintf('test_SSFPG_gram_rust passed\n');
+end

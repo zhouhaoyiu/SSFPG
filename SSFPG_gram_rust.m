@@ -4,7 +4,8 @@ if exist('SSFPG_gram_rust_mex','file')~=3
     error('SSFPG_gram_rust:notBuilt','Run build_SSFPG_gram_rust first.')
 end
 if nargin<5,isscaling=0;end
-if ~isscalar(isscaling) || ~(isscaling==0 || isscaling==1)
+if ~(isnumeric(isscaling) || islogical(isscaling)) || ~isscalar(isscaling) || ...
+        ~isreal(isscaling) || ~isfinite(isscaling) || ~(isscaling==0 || isscaling==1)
     error('SSFPG_gram_rust:scaling','isscaling must be 0 or 1.')
 end
 if ~isa(G,'double') || ~isreal(G) || issparse(G)

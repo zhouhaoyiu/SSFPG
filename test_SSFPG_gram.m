@@ -28,5 +28,11 @@ try
 catch ME
     assert(strcmp(ME.identifier,'SSFPG_gram:cache'))
 end
+try
+    SSFPG_gram(G,b,1e-10,2,project,[0 1]);
+    error('test_SSFPG_gram:scalingAccepted','Nonscalar isscaling was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram:scaling'))
+end
 fprintf('test_SSFPG_gram passed\n');
 end

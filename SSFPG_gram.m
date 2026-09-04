@@ -31,6 +31,10 @@ function [X_out,misfit,t0,t_isrevise,Xall,Xdif,cache]=SSFPG_gram(G,ob,Xtol0,iter
 if nargin<6
     isscaling=0;
 end
+if ~(isnumeric(isscaling) || islogical(isscaling)) || ~isscalar(isscaling) || ...
+        ~isreal(isscaling) || ~isfinite(isscaling) || ~(isscaling==0 || isscaling==1)
+    error('SSFPG_gram:scaling','isscaling must be 0 or 1.')
+end
 sg=size(G);
 if ~iscolumn(ob) || size(G,1)~=numel(ob)
     error('SSFPG_gram:dimensions','ob must be a column vector with size(G,1) elements.')

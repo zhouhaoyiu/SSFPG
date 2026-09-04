@@ -61,6 +61,11 @@ pub unsafe extern "C" fn ssfpg_gram_core(
     let used_steps = slice::from_raw_parts_mut(used_steps_ptr, iter);
     let revised = slice::from_raw_parts_mut(revised_ptr, iter);
     let xdif = slice::from_raw_parts_mut(xdif_ptr, iter);
+    let mut xall = if xall_ptr.is_null() {
+        None
+    } else {
+        Some(slice::from_raw_parts_mut(xall_ptr, m * iter))
+    };
 
     used_steps.copy_from_slice(steps);
     let mut x = xinit.to_vec();
@@ -127,8 +132,7 @@ pub unsafe extern "C" fn ssfpg_gram_core(
         for j in 0..m {
             gradient[j] = c[j] - hx[j];
         }
-        if !xall_ptr.is_null() {
-            let xall = slice::from_raw_parts_mut(xall_ptr, m * iter);
+        if let Some(xall) = xall.as_deref_mut() {
             xall[k * m..(k + 1) * m].copy_from_slice(&x);
         }
 
