@@ -18,5 +18,11 @@ xneg=SSFPG_fast(eye(3),-ones(3,1),1e-12,10,'X=max(X,0);',1);
 xzero=SSFPG_fast(eye(3),zeros(3,1),1e-12,10,'X=max(X,0);',1);
 assert(all(isfinite(xneg)) && norm(xneg)==0);
 assert(all(isfinite(xzero)) && norm(xzero)==0);
+try
+    SSFPG_fast(G,b,1e-10,2,@(X)max(X,0),1,1+1i);
+    error('test_SSFPG_fast:complexAccepted','Complex L was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_fast:egmax'))
+end
 fprintf('test_SSFPG_fast passed\n');
 end

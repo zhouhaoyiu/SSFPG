@@ -44,12 +44,16 @@ end
 
 if nargin<7 || isempty(cache)
     cache.H=G'*G;
-    cache.L=1.01*eigs(cache.H,1,'largestabs');
+    [~,cache.L,flag]=eigs(cache.H,1,'largestabs');
+    if flag~=0 || ~isreal(cache.L) || ~isfinite(cache.L) || cache.L<=0
+        error('SSFPG_gram:eigs','Unable to estimate a positive finite real largest eigenvalue.')
+    end
+    cache.L=1.01*cache.L;
 end
 if ~isstruct(cache) || ~isfield(cache,'H') || ~isfield(cache,'L') || ...
-        ~isequal(size(cache.H),[sg(2),sg(2)]) || ~isscalar(cache.L) || ...
-        ~isfinite(cache.L) || cache.L<=0
-    error('SSFPG_gram:cache','cache must contain a compatible H and positive L.')
+        ~isequal(size(cache.H),[sg(2),sg(2)]) || ~isnumeric(cache.L) || ~isscalar(cache.L) || ...
+        ~isreal(cache.L) || ~isfinite(cache.L) || cache.L<=0
+    error('SSFPG_gram:cache','cache must contain a compatible H and positive finite real L.')
 end
 H=cache.H;
 egmax=cache.L;

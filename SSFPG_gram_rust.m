@@ -20,12 +20,17 @@ end
 m=size(G,2);
 if nargin<6 || isempty(cache)
     cache.H=G'*G;
-    cache.L=1.01*eigs(cache.H,1,'largestabs');
+    [~,cache.L,flag]=eigs(cache.H,1,'largestabs');
+    if flag~=0 || ~isreal(cache.L) || ~isfinite(cache.L) || cache.L<=0
+        error('SSFPG_gram_rust:eigs','Unable to estimate a positive finite real largest eigenvalue.')
+    end
+    cache.L=1.01*cache.L;
 end
 if ~isstruct(cache) || ~isfield(cache,'H') || ~isfield(cache,'L') || ...
         ~isa(cache.H,'double') || ~isreal(cache.H) || issparse(cache.H) || ...
-        ~isequal(size(cache.H),[m,m]) || ~isscalar(cache.L) || ~isfinite(cache.L) || cache.L<=0
-    error('SSFPG_gram_rust:cache','cache must contain a full real double H and positive L.')
+        ~isequal(size(cache.H),[m,m]) || ~isnumeric(cache.L) || ~isscalar(cache.L) || ~isreal(cache.L) || ...
+        ~isfinite(cache.L) || cache.L<=0
+    error('SSFPG_gram_rust:cache','cache must contain a full real double H and positive finite real L.')
 end
 if nargin<7 || isempty(Xinit)
     Xinit=ones(m,1);

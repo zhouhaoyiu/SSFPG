@@ -47,8 +47,8 @@ end
 if nargin<7 || isempty(egmax)
     egmax=egmax_esti(G);
 end
-if ~isscalar(egmax) || ~isfinite(egmax) || egmax<=0
-    error('SSFPG_fast:egmax','egmax must be a positive finite scalar.')
+if ~isnumeric(egmax) || ~isscalar(egmax) || ~isreal(egmax) || ~isfinite(egmax) || egmax<=0
+    error('SSFPG_fast:egmax','egmax must be a positive finite real scalar.')
 end
 isprojector=isa(evalchar,'function_handle');
 if ~isprojector && ~(ischar(evalchar) || (isstring(evalchar) && isscalar(evalchar)))

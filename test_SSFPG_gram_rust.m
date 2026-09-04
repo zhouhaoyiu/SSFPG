@@ -10,6 +10,13 @@ assert(isequal(size(am),size(ar)) && numel(mm)==numel(mr) && numel(rm)==numel(rr
 assert(norm(xr0-xm0)/max(norm(xm0),eps)<1e-11)
 [xz,mz]=SSFPG_gram_rust(eye(3),zeros(3,1),0,2,1,struct('H',eye(3),'L',1.01));
 assert(all(xz==0) && all(isfinite(mz)))
+badCache=cache;badCache.L=1+1i;
+try
+    SSFPG_gram_rust(G,b,0,2,1,badCache);
+    error('test_SSFPG_gram_rust:complexAccepted','Complex L was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram_rust:cache'))
+end
 
 rng(7);m=160;n=80;[U,~]=qr(randn(m,n),0);[V,~]=qr(randn(n,n),0);xtrue=0.1+abs(randn(n,1));
 for kappa=[10 1e3 1e6 1e8]

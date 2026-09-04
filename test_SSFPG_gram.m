@@ -21,5 +21,12 @@ xneg=SSFPG_gram(eye(3),-ones(3,1),1e-12,10,project,1);
 xzero=SSFPG_gram(eye(3),zeros(3,1),1e-12,10,project,1);
 assert(all(isfinite(xneg)) && norm(xneg)==0);
 assert(all(isfinite(xzero)) && norm(xzero)==0);
+badCache=cache;badCache.L=1+1i;
+try
+    SSFPG_gram(G,b,1e-10,2,project,1,badCache);
+    error('test_SSFPG_gram:complexAccepted','Complex L was accepted.')
+catch ME
+    assert(strcmp(ME.identifier,'SSFPG_gram:cache'))
+end
 fprintf('test_SSFPG_gram passed\n');
 end
