@@ -48,7 +48,9 @@ end                                            % 输入参数默认值处理结�
 egmax = egmax_esti(G, D);                      % 高效估计 Lipschitz 常数（调用本文件末尾子函数）
 % 下面准备迭代所用的松弛（步长）序列
 t0 = load('t0_1e6_30.mat');                    % 载入预先计算好的步长序列
-t0 = t0.t0; t0(t0 == 0) = [];                  % 取出步长向量，并剔除其中为 0 的元素
+% 取出步长向量，并剔除其中为 0 的元素
+t0 = t0.t0;
+t0(t0 == 0) = [];
 t0 = t0 / egmax;                               % 用 Lipschitz 常数对步长归一化缩放
 % 计算步长上界并拼接步长序列
 tmax = 2 / egmax;                              % 保证收敛的步长上界 2/egmax
@@ -77,7 +79,10 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
     % 可选的解缩放
     if isscaling == 1                          % 若开启了“解缩放”选项
         fac = sum(ob .* syn) ./ sum(syn .* syn);  % 逐列计算缩放因子（每列一组数据）
-        fac = sparse(1:numel(fac), 1:numel(fac), fac); syn = syn * fac; X = X * fac;  % 构造成对角稀疏矩阵，一次性完成整批缩放
+        % 构造成对角稀疏矩阵，一次性完成整批缩放
+        fac = sparse(1:numel(fac), 1:numel(fac), fac);
+        syn = syn * fac;
+        X = X * fac;
     end                                        % 解缩放分支结束
     % 计算残差并记录
     ex = ob - syn;                             % 更新残差
@@ -102,11 +107,17 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
             syn_re = [G * X_re; D * X_re];     % 正演合成数据
             if isscaling == 1                  % 若开启了“解缩放”选项
                 fac = sum(ob_re .* syn_re) ./ sum(syn_re .* syn_re);  % 逐列计算缩放因子
-                fac = fac(:)'; syn_re = syn_re .* fac; X_re = X_re .* fac;  % 按行向量逐列缩放合成数据与解
+                % 按行向量逐列缩放合成数据与解
+                fac = fac(:)';
+                syn_re = syn_re .* fac;
+                X_re = X_re .* fac;
             end                                % 缩放分支结束
             ex_re = ob_re - syn_re;            % 计算试探解的残差
             misfit_re = sum(ex_re .^ 2) ./ obE(index);  % 计算试探解的归一化残差
-            misfit(i, index) = misfit_re; X(:, index) = X_re; ex(:, index) = ex_re;  % 用试探结果覆盖这些组的解与残差
+            % 用试探结果覆盖这些组的解与残差
+            misfit(i, index) = misfit_re;
+            X(:, index) = X_re;
+            ex(:, index) = ex_re;
 %             t0i = logspace(log10(tmax / 2), log10(t0(i)), 20);  % 【原注】另一种做法：对每组数据各试 20 个步长
 %             for kk = 1:size(X0_re, 2)        % 【原注】逐组循环
 %                 X_rea0 = X0_re(:, kk) + Xe_re(:, kk) * t0i;  % 【原注】生成该组的候选解

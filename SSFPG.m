@@ -80,7 +80,9 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
     syn = G * X;                               % 由当前解正演合成数据 syn = G*X
     if isscaling == 1                          % 若开启了“解缩放”选项
         % 缩放因子 fac=(ob'syn)/(syn'syn)，同步缩放合成数据与解以加速收敛
-        fac = ob' * syn ./ (syn' * syn); syn = syn * fac; X = X * fac;
+        fac = ob' * syn ./ (syn' * syn);
+        syn = syn * fac;
+        X = X * fac;
     end                                        % 解缩放分支结束
     ex = ob - syn;                             % 更新残差 ex = ob - syn
     % 记录本轮的归一化残差
@@ -95,7 +97,9 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
             syn = G * X;                       % 批量正演合成数据
             if isscaling == 1                  % 若开启了“解缩放”选项
                 fac = sum(ob .* syn) ./ sum(syn .* syn);  % 逐列计算缩放因子（对批量解按列求和）
-                syn = syn .* fac; X = X .* fac;  % 对批量合成数据与批量解同步缩放
+                % 对批量合成数据与批量解同步缩放
+                syn = syn .* fac;
+                X = X .* fac;
             end                                % 批量缩放分支结束
             ex = ob - syn;                     % 批量更新残差
             % 计算每个候选步长对应的残差
@@ -103,7 +107,11 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
             % 挑出残差最小的候选
             [~, nj] = min(misfitj);            % nj 为最优候选步长的序号
             % 用最优候选覆盖本轮结果
-            t0(i) = t0i(nj); misfit(i) = misfitj(nj); X = X(:, nj); ex = ex(:, nj);  % 覆盖步长、残差、解、残差向量
+            % 覆盖步长、残差、解、残差向量
+            t0(i) = t0i(nj);
+            misfit(i) = misfitj(nj);
+            X = X(:, nj);
+            ex = ex(:, nj);
             t_isrevise(i) = t_isrevise(i) + 1;  % 标记本轮触发过一次步长重搜索
         end                                    % 步长重搜索分支结束
     end                                        % 步长上界判断结束

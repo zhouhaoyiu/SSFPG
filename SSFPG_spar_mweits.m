@@ -56,7 +56,10 @@ weits = weits(:);                              % 把权重数组强制拉成列�
 % 【原注】幂迭代法：实现简单但收敛慢，未启用
 egmax = GD_mweits(G, D, weits, 20, 1e-10);     % 用批量 Lanczos 法（快）一次算出所有权重对应的最大特征值
 % 下面准备迭代所用的松弛（步长）序列（按权重逐列构造）
-t0 = load('t0_1e6_30.mat'); t0 = t0.t0; t0(t0 == 0) = [];  % 载入预设步长序列，并剔除其中为 0 的元素
+% 载入预设步长序列，并剔除其中为 0 的元素
+t0 = load('t0_1e6_30.mat');
+t0 = t0.t0;
+t0(t0 == 0) = [];
 t0 = repmat(t0, [1, numel(weits)]);            % 把步长序列横向复制，使每一列对应一个权重
 t0 = t0 ./ egmax(:)';                          % 逐列用各自的最大特征值归一化（按行广播）
 %tmax = 2. / egmax;                            % 【原注】保证收敛的步长上界，此处未使用
@@ -88,7 +91,10 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
     syn = [G * X; D * (X .* weits(:)')];       % 正演合成数据：约束块按列乘权重
     % 可选的解缩放
     if isscaling == 1                          % 若开启了“解缩放”选项
-        fac = sum(ob .* syn) ./ sum(syn .* syn); syn = syn .* fac; X = X .* fac;  % 逐列缩放因子，同步缩放合成数据与解
+        % 逐列缩放因子，同步缩放合成数据与解
+        fac = sum(ob .* syn) ./ sum(syn .* syn);
+        syn = syn .* fac;
+        X = X .* fac;
     end                                        % 解缩放分支结束
     ex = ob - syn;                             % 更新残差
     misfit(i, :) = sum(ex .^ 2) / obE;         % 记录本轮各权重的归一化残差
@@ -108,7 +114,9 @@ for i = 1:iter                                 % 逐次迭代，共 iter 次
             syn_dex = [G * X_dex; (D * X_dex) .* weits(dex)'];  % 正演合成数据（按权重乘约束块）
             if isscaling == 1                  % 若开启了“解缩放”选项
                 % 缩放后写回
-                fac = sum(ob .* syn_dex) ./ sum(syn_dex .* syn_dex); syn_dex = syn_dex .* fac; X(:, dex) = X_dex .* fac;
+                fac = sum(ob .* syn_dex) ./ sum(syn_dex .* syn_dex);
+                syn_dex = syn_dex .* fac;
+                X(:, dex) = X_dex .* fac;
             end                                % 缩放分支结束
             ex_dex = ob - syn_dex;             % 计算候选解残差
             ex(:, dex) = ex_dex;               % 覆盖对应权重的残差
